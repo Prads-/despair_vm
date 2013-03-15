@@ -41,6 +41,22 @@ private:
 	GPUCore *gpuCore;
 	PortManager portManager;
 	
+	inline void MOV_MR_IMMI_R() {
+		*(uint32*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 2]) = regs[memManager.codeSpace[pC]];
+	}
+
+	inline void MOV_R_MR_IMMI() {
+		regs[memManager.codeSpace[pC]] = *(uint32*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 2]);
+	}
+
+	inline void MOV_MR_IMMI_MR_IMMI() {
+		*(uint32*)(regs[memManager.codeSpace[pC]] + *(uint32*)&memManager.codeSpace[pC + 2]) = *(uint32*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 6]);
+	}
+
+	inline void MOV_MR_IMMI_IMMI() {
+		*(uint32*)(regs[memManager.codeSpace[pC]] + *(uint32*)&memManager.codeSpace[pC + 1]) = *(uint32*)&memManager.codeSpace[pC + 5];
+	}
+
 	inline void MOV_R_M() {
 		regs[memManager.codeSpace[pC]] = *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
 	}
@@ -89,484 +105,84 @@ private:
 		*(uint32*)regs[memManager.codeSpace[pC]] = *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void ADD_R_M() {
-		regs[memManager.codeSpace[pC]] += *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void ADD_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] += regs[memManager.codeSpace[pC]];
-	}
-
 	inline void ADD_R_R() {
 		regs[memManager.codeSpace[pC]] += regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void ADD_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] += *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void ADD_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] += regs[memManager.codeSpace[pC]];
-	}
-
-	inline void ADD_R_MR() {
-		regs[memManager.codeSpace[pC]] += *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void ADD_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] += *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void ADD_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] += *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void ADD_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] += *(uint32*)regs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void ADD_R_IMMI() {
 		regs[memManager.codeSpace[pC]] += *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void ADD_M_IMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] += *(uint32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void ADD_MR_IMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] += *(uint32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void SUB_R_M() {
-		regs[memManager.codeSpace[pC]] -= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SUB_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] -= regs[memManager.codeSpace[pC]];
-	}
-
 	inline void SUB_R_R() {
 		regs[memManager.codeSpace[pC]] -= regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SUB_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] -= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void SUB_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] -= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void SUB_R_MR() {
-		regs[memManager.codeSpace[pC]] -= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SUB_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] -= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SUB_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] -= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void SUB_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] -= *(uint32*)regs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void SUB_R_IMMI() {
 		regs[memManager.codeSpace[pC]] -= *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void SUB_M_IMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] -= *(uint32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void SUB_MR_IMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] -= *(uint32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void MUL_R_M() {
-		regs[memManager.codeSpace[pC]] *= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void MUL_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] *= regs[memManager.codeSpace[pC]];
-	}
-
 	inline void MUL_R_R() {
 		regs[memManager.codeSpace[pC]] *= regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void MUL_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] *= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void MUL_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] *= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void MUL_R_MR() {
-		regs[memManager.codeSpace[pC]] *= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void MUL_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] *= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void MUL_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] *= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void MUL_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] *= *(uint32*)regs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void MUL_R_IMMI() {
 		regs[memManager.codeSpace[pC]] *= *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void MUL_M_IMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] *= *(uint32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void MUL_MR_IMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] *= *(uint32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void DIV_R_M() {
-		regs[memManager.codeSpace[pC]] /= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void DIV_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] /= regs[memManager.codeSpace[pC]];
-	}
-
 	inline void DIV_R_R() {
 		regs[memManager.codeSpace[pC]] /= regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void DIV_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] /= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void DIV_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] /= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void DIV_R_MR() {
-		regs[memManager.codeSpace[pC]] /= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void DIV_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] /= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void DIV_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] /= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void DIV_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] /= *(uint32*)regs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void DIV_R_IMMI() {
 		regs[memManager.codeSpace[pC]] /= *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void DIV_M_IMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] /= *(uint32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void DIV_MR_IMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] /= *(uint32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void MOD_R_M() {
-		regs[memManager.codeSpace[pC]] %= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void MOD_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] %= regs[memManager.codeSpace[pC]];
-	}
-
 	inline void MOD_R_R() {
 		regs[memManager.codeSpace[pC]] %= regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void MOD_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] %= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void MOD_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] %= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void MOD_R_MR() {
-		regs[memManager.codeSpace[pC]] %= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void MOD_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] %= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void MOD_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] %= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void MOD_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] %= *(uint32*)regs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void MOD_R_IMMI() {
 		regs[memManager.codeSpace[pC]] %= *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void MOD_M_IMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] %= *(uint32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void MOD_MR_IMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] %= *(uint32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void AND_R_M() {
-		regs[memManager.codeSpace[pC]] &= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void AND_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] &= regs[memManager.codeSpace[pC]];
-	}
-
 	inline void AND_R_R() {
 		regs[memManager.codeSpace[pC]] &= regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void AND_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] &= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void AND_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] &= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void AND_R_MR() {
-		regs[memManager.codeSpace[pC]] &= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void AND_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] &= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void AND_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] &= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void AND_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] &= *(uint32*)regs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void AND_R_IMMI() {
 		regs[memManager.codeSpace[pC]] &= *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void AND_M_IMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] &= *(uint32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void AND_MR_IMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] &= *(uint32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void OR_R_M() {
-		regs[memManager.codeSpace[pC]] |= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void OR_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] |= regs[memManager.codeSpace[pC]];
-	}
-
 	inline void OR_R_R() {
 		regs[memManager.codeSpace[pC]] |= regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void OR_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] |= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void OR_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] |= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void OR_R_MR() {
-		regs[memManager.codeSpace[pC]] |= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void OR_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] |= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void OR_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] |= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void OR_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] |= *(uint32*)regs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void OR_R_IMMI() {
 		regs[memManager.codeSpace[pC]] |= *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void OR_M_IMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] |= *(uint32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void OR_MR_IMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] |= *(uint32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void XOR_R_M() {
-		regs[memManager.codeSpace[pC]] ^= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void XOR_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] ^= regs[memManager.codeSpace[pC]];
-	}
-
 	inline void XOR_R_R() {
 		regs[memManager.codeSpace[pC]] ^= regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void XOR_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] ^= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void XOR_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] ^= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void XOR_R_MR() {
-		regs[memManager.codeSpace[pC]] ^= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void XOR_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] ^= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void XOR_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] ^= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void XOR_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] ^= *(uint32*)regs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void XOR_R_IMMI() {
 		regs[memManager.codeSpace[pC]] ^= *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void XOR_M_IMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] ^= *(uint32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void XOR_MR_IMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] |= *(uint32*)&memManager.codeSpace[pC + 1];
-	}
-
 	inline void SHL_R_IMMI8() {
 		regs[memManager.codeSpace[pC]] <<= memManager.codeSpace[pC + 1];
-	}
-
-	inline void SHL_M_IMMI8() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] <<= memManager.codeSpace[pC + 4];
-	}
-
-	inline void SHL_MR_IMMI8() {
-		*(uint32*)regs[memManager.codeSpace[pC]] <<= memManager.codeSpace[pC + 1];
 	}
 
 	inline void SHL_R_R() {
 		regs[memManager.codeSpace[pC]] <<= regs[memManager.codeSpace[pC + 1]];
 	}
 
-	inline void SHL_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] <<= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void SHL_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] <<= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void SHL_R_M() {
-		regs[memManager.codeSpace[pC]] <<= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SHL_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] <<= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void SHL_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] <<= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SHL_R_MR() {
-		regs[memManager.codeSpace[pC]] <<= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SHL_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] <<= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void SHL_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] <<= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
 	inline void SHR_R_IMMI8() {
 		regs[memManager.codeSpace[pC]] >>= memManager.codeSpace[pC + 1];
 	}
 
-	inline void SHR_M_IMMI8() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] >>= memManager.codeSpace[pC + 4];
-	}
-
-	inline void SHR_MR_IMMI8() {
-		*(uint32*)regs[memManager.codeSpace[pC]] >>= memManager.codeSpace[pC + 1];
-	}
-
 	inline void SHR_R_R() {
 		regs[memManager.codeSpace[pC]] >>= regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SHR_M_R() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] >>= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void SHR_MR_R() {
-		*(uint32*)regs[memManager.codeSpace[pC + 1]] >>= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void SHR_R_M() {
-		regs[memManager.codeSpace[pC]] >>= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SHR_M_M() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] >>= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void SHR_MR_M() {
-		*(uint32*)regs[memManager.codeSpace[pC]] >>= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SHR_R_MR() {
-		regs[memManager.codeSpace[pC]] >>= *(uint32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void SHR_M_MR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] >>= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void SHR_MR_MR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] >>= *(uint32*)regs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void JMP_IMMI() {
@@ -587,6 +203,18 @@ private:
 
 	inline void JCR_R_IMMI() {
 		if (regs[memManager.codeSpace[pC]] == 0) pC += *(int32*)&memManager.codeSpace[pC + 1];
+	}
+
+	inline void MOVP_R_MR_IMMI() {
+		regs[memManager.codeSpace[pC]] = *(uint64*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 2]);
+	}
+
+	inline void MOVP_MR_IMMI_R() {
+		*(uint64*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 2]) = regs[memManager.codeSpace[pC]];
+	}
+
+	inline void MOVP_MR_IMMI_MR_IMMI() {
+		*(uint64*)(regs[memManager.codeSpace[pC]] + *(uint32*)&memManager.codeSpace[pC + 2]) = *(uint64*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 6]);;
 	}
 
 	inline void MOVP_R_M() {
@@ -629,12 +257,8 @@ private:
 		regs[memManager.codeSpace[pC]] = *(int64*)&memManager.stackSpace[sP];
 	}
 
-	inline void DRW_R_R_R() {
+	inline void DRW_R_R_MR() {
 		gpuCore->draw(regs[memManager.codeSpace[pC]], regs[memManager.codeSpace[pC + 1]], regs[memManager.codeSpace[pC + 2]], portManager.readPort<uint8>(PORT_GPU_EFFECTS), portManager.readPort<uint16>(PORT_GPU_ROTATION));
-	}
-
-	inline void DRW_R_R_M() {
-		gpuCore->draw(regs[memManager.codeSpace[pC]], regs[memManager.codeSpace[pC + 1]], *(uint64*)&memManager.codeSpace[pC + 2], portManager.readPort<uint8>(PORT_GPU_EFFECTS), portManager.readPort<uint16>(PORT_GPU_ROTATION));
 	}
 
 	inline void OUT_R_IMMI8() {
@@ -742,92 +366,28 @@ private:
 		fRegs[memManager.codeSpace[pC + 1]] = regs[memManager.codeSpace[pC]];
 	}
 
-	inline void FCON_MR_FR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] = fRegs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FCON_FR_MR() {
-		fRegs[memManager.codeSpace[pC + 1]] = *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FCON_M_FR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] = fRegs[memManager.codeSpace[pC]];
-	}
-
-	inline void FCON_FR_M() {
-		fRegs[memManager.codeSpace[pC]] = *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FCON_R_FM() {
-		regs[memManager.codeSpace[pC]] = *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FCON_FM_R() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] = regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FCON_MR_FM() {
-		*(uint32*)regs[memManager.codeSpace[pC]] = *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FCON_FM_MR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] = *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FCON_M_FM() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] = *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void FCON_FM_M() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]] = *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]];
-	}
-
-	inline void FCON_R_MFR() {
-		regs[memManager.codeSpace[pC]] = *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FCON_MFR_R() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] = regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FCON_MR_MFR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] = *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FCON_MFR_MR() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] = *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FCON_M_MFR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] = *(float32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FCON_MFR_M() {
-		*(float32*)regs[memManager.codeSpace[pC]] = *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
 	inline void FCON_FR_IMMI() {
 		fRegs[memManager.codeSpace[pC]] = *(uint32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void FCON_FM_IMMI() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] = *(uint32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void FCON_MFR_IMMI() {
-		*(float32*)regs[memManager.codeSpace[pC]] = *(uint32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void FCON_R_FIMMI() {
 		regs[memManager.codeSpace[pC]] = *(float32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void FCON_M_FIMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] = *(float32*)&memManager.codeSpace[pC + 4];
+	inline void FMOV_FR_MFR_IMMI() {
+		fRegs[memManager.codeSpace[pC + 1]] = *(float32*)(regs[memManager.codeSpace[pC]] + *(uint32*)&memManager.codeSpace[pC + 2]);
 	}
 
-	inline void FCON_MR_FIMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] = *(float32*)&memManager.codeSpace[pC + 1];
+	inline void FMOV_MFR_IMMI_FR() {
+		*(float32*)(regs[memManager.codeSpace[pC]] + *(uint32*)&memManager.codeSpace[pC + 2]) = fRegs[memManager.codeSpace[pC + 1]];
+	}
+
+	inline void FMOV_MFR_IMMI_MFR_IMMI() {
+		*(float32*)(regs[memManager.codeSpace[pC]] + *(uint32*)&memManager.codeSpace[pC + 2]) = *(float32*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 6]);
+	}
+
+	inline void FMOV_MFR_IMMI_FIMMI() {
+		*(float32*)(regs[memManager.codeSpace[pC]] + *(uint32*)&memManager.codeSpace[pC + 1]) = *(float32*)&memManager.codeSpace[pC + 5];
 	}
 
 	inline void FMOV_FR_FR() {
@@ -882,22 +442,6 @@ private:
 		fRegs[memManager.codeSpace[pC]] += fRegs[memManager.codeSpace[pC + 1]];
 	}
 
-	inline void FADD_FR_FM() {
-		fRegs[memManager.codeSpace[pC]] += *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FADD_FM_FR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] += fRegs[memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_FR_MFR() {
-		fRegs[memManager.codeSpace[pC + 1]] += *(float32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_MFR_FR() {
-		*(float32*)regs[memManager.codeSpace[pC]] += fRegs[memManager.codeSpace[pC + 1]];
-	}
-
 	inline void FADD_R_FR() {
 		regs[memManager.codeSpace[pC]] += fRegs[memManager.codeSpace[pC + 1]];
 	}
@@ -906,112 +450,16 @@ private:
 		fRegs[memManager.codeSpace[pC + 1]] += regs[memManager.codeSpace[pC]];
 	}
 
-	inline void FADD_MR_FR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] += fRegs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FADD_FR_MR() {
-		fRegs[memManager.codeSpace[pC + 1]] += *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_M_FR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] += fRegs[memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_FR_M() {
-		fRegs[memManager.codeSpace[pC]] += *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FADD_R_FM() {
-		regs[memManager.codeSpace[pC]] += *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FADD_FM_R() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] += regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_MR_FM() {
-		*(uint32*)regs[memManager.codeSpace[pC]] += *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FADD_FM_MR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] += *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_M_FM() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] += *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void FADD_FM_M() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]] += *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_R_MFR() {
-		regs[memManager.codeSpace[pC]] += *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FADD_MFR_R() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] += regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_MR_MFR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] += *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FADD_MFR_MR() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] += *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_M_MFR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] += *(float32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FADD_MFR_M() {
-		*(float32*)regs[memManager.codeSpace[pC]] += *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
 	inline void FADD_FR_FIMMI() {
 		fRegs[memManager.codeSpace[pC]] += *(float32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void FADD_FM_FIMMI() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] += *(float32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void FADD_MFR_FIMMI() {
-		*(float32*)regs[memManager.codeSpace[pC]] += *(float32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void FADD_R_FIMMI() {
 		regs[memManager.codeSpace[pC]] += *(float32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void FADD_M_FIMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] += *(float32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void FADD_MR_FIMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] += *(float32*)&memManager.codeSpace[pC + 1];
-	}
-
 	inline void FSUB_FR_FR() {
 		fRegs[memManager.codeSpace[pC]] -= fRegs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FSUB_FR_FM() {
-		fRegs[memManager.codeSpace[pC]] -= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FSUB_FM_FR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] -= fRegs[memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_FR_MFR() {
-		fRegs[memManager.codeSpace[pC + 1]] -= *(float32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_MFR_FR() {
-		*(float32*)regs[memManager.codeSpace[pC]] -= fRegs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void FSUB_R_FR() {
@@ -1022,114 +470,16 @@ private:
 		fRegs[memManager.codeSpace[pC + 1]] -= regs[memManager.codeSpace[pC]];
 	}
 
-	inline void FSUB_MR_FR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] -= fRegs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FSUB_FR_MR() {
-		fRegs[memManager.codeSpace[pC + 1]] -= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_M_FR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] -= fRegs[memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_FR_M() {
-		fRegs[memManager.codeSpace[pC]] -= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FSUB_R_FM() {
-		regs[memManager.codeSpace[pC]] -= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FSUB_FM_R() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] -= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_MR_FM() {
-		*(uint32*)regs[memManager.codeSpace[pC]] -= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FSUB_FM_MR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] -= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_M_FM() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] -= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void FSUB_FM_M() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]] -= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_R_MFR() {
-		regs[memManager.codeSpace[pC]] -= *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FSUB_MFR_R() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] -= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_MR_MFR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] -= *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FSUB_MFR_MR() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] -= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_M_MFR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] -= *(float32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FSUB_MFR_M() {
-		*(float32*)regs[memManager.codeSpace[pC]] -= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
 	inline void FSUB_FR_FIMMI() {
 		fRegs[memManager.codeSpace[pC]] -= *(float32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void FSUB_FM_FIMMI() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] -= *(float32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void FSUB_MFR_FIMMI() {
-		*(float32*)regs[memManager.codeSpace[pC]] -= *(float32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void FSUB_R_FIMMI() {
 		regs[memManager.codeSpace[pC]] -= *(float32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void FSUB_M_FIMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] -= *(float32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void FSUB_MR_FIMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] -= *(float32*)&memManager.codeSpace[pC + 1];
-	}
-
-	//
-
 	inline void FMUL_FR_FR() {
 		fRegs[memManager.codeSpace[pC]] *= fRegs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FMUL_FR_FM() {
-		fRegs[memManager.codeSpace[pC]] *= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FMUL_FM_FR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] *= fRegs[memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_FR_MFR() {
-		fRegs[memManager.codeSpace[pC + 1]] *= *(float32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_MFR_FR() {
-		*(float32*)regs[memManager.codeSpace[pC]] *= fRegs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void FMUL_R_FR() {
@@ -1140,112 +490,16 @@ private:
 		fRegs[memManager.codeSpace[pC + 1]] *= regs[memManager.codeSpace[pC]];
 	}
 
-	inline void FMUL_MR_FR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] *= fRegs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FMUL_FR_MR() {
-		fRegs[memManager.codeSpace[pC + 1]] *= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_M_FR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] *= fRegs[memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_FR_M() {
-		fRegs[memManager.codeSpace[pC]] *= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FMUL_R_FM() {
-		regs[memManager.codeSpace[pC]] *= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FMUL_FM_R() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] *= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_MR_FM() {
-		*(uint32*)regs[memManager.codeSpace[pC]] *= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FMUL_FM_MR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] *= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_M_FM() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] *= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void FMUL_FM_M() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]] *= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_R_MFR() {
-		regs[memManager.codeSpace[pC]] *= *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FMUL_MFR_R() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] *= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_MR_MFR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] *= *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FMUL_MFR_MR() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] *= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_M_MFR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] *= *(float32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FMUL_MFR_M() {
-		*(float32*)regs[memManager.codeSpace[pC]] *= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
 	inline void FMUL_FR_FIMMI() {
 		fRegs[memManager.codeSpace[pC]] *= *(float32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void FMUL_FM_FIMMI() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] *= *(float32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void FMUL_MFR_FIMMI() {
-		*(float32*)regs[memManager.codeSpace[pC]] *= *(float32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void FMUL_R_FIMMI() {
 		regs[memManager.codeSpace[pC]] *= *(float32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void FMUL_M_FIMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] *= *(float32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void FMUL_MR_FIMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] *= *(float32*)&memManager.codeSpace[pC + 1];
-	}
-
 	inline void FDIV_FR_FR() {
 		fRegs[memManager.codeSpace[pC]] /= fRegs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FDIV_FR_FM() {
-		fRegs[memManager.codeSpace[pC]] /= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FDIV_FM_FR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] /= fRegs[memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_FR_MFR() {
-		fRegs[memManager.codeSpace[pC + 1]] /= *(float32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_MFR_FR() {
-		*(float32*)regs[memManager.codeSpace[pC]] /= fRegs[memManager.codeSpace[pC + 1]];
 	}
 
 	inline void FDIV_R_FR() {
@@ -1256,114 +510,16 @@ private:
 		fRegs[memManager.codeSpace[pC + 1]] /= regs[memManager.codeSpace[pC]];
 	}
 
-	inline void FDIV_MR_FR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] /= fRegs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FDIV_FR_MR() {
-		fRegs[memManager.codeSpace[pC + 1]] /= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_M_FR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] /= fRegs[memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_FR_M() {
-		fRegs[memManager.codeSpace[pC]] /= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FDIV_R_FM() {
-		regs[memManager.codeSpace[pC]] /= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FDIV_FM_R() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] /= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_MR_FM() {
-		*(uint32*)regs[memManager.codeSpace[pC]] /= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FDIV_FM_MR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] /= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_M_FM() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] /= *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]];
-	}
-
-	inline void FDIV_FM_M() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]] /= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_R_MFR() {
-		regs[memManager.codeSpace[pC]] /= *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FDIV_MFR_R() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] /= regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_MR_MFR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] /= *(float32*)regs[memManager.codeSpace[pC + 1]];
-	}
-
-	inline void FDIV_MFR_MR() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] /= *(uint32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_M_MFR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] /= *(float32*)regs[memManager.codeSpace[pC]];
-	}
-
-	inline void FDIV_MFR_M() {
-		*(float32*)regs[memManager.codeSpace[pC]] /= *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]];
-	}
-
 	inline void FDIV_FR_FIMMI() {
 		fRegs[memManager.codeSpace[pC]] /= *(float32*)&memManager.codeSpace[pC + 1];
-	}
-
-	inline void FDIV_FM_FIMMI() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] /= *(float32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void FDIV_MFR_FIMMI() {
-		*(float32*)regs[memManager.codeSpace[pC]] /= *(float32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void FDIV_R_FIMMI() {
 		regs[memManager.codeSpace[pC]] /= *(float32*)&memManager.codeSpace[pC + 1];
 	}
 
-	inline void FDIV_M_FIMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] /= *(float32*)&memManager.codeSpace[pC + 4];
-	}
-
-	inline void FDIV_MR_FIMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] /= *(float32*)&memManager.codeSpace[pC + 1];
-	}
-
-	//
-
 	inline void FMOD_FR_FR() {
 		fRegs[memManager.codeSpace[pC]] = fmod(fRegs[memManager.codeSpace[pC]], fRegs[memManager.codeSpace[pC + 1]]);
-	}
-
-	inline void FMOD_FR_FM() {
-		fRegs[memManager.codeSpace[pC]] = fmod(fRegs[memManager.codeSpace[pC]], *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]]);
-	}
-
-	inline void FMOD_FM_FR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] = fmod(*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]], fRegs[memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_FR_MFR() {
-		fRegs[memManager.codeSpace[pC + 1]] = fmod(fRegs[memManager.codeSpace[pC + 1]], *(float32*)regs[memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_MFR_FR() {
-		*(float32*)regs[memManager.codeSpace[pC]] = fmod(*(float32*)regs[memManager.codeSpace[pC]], fRegs[memManager.codeSpace[pC + 1]]);
 	}
 
 	inline void FMOD_R_FR() {
@@ -1374,92 +530,28 @@ private:
 		fRegs[memManager.codeSpace[pC + 1]] = fmod(fRegs[memManager.codeSpace[pC + 1]], regs[memManager.codeSpace[pC]]);
 	}
 
-	inline void FMOD_MR_FR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] = fmod(*(uint32*)regs[memManager.codeSpace[pC]], fRegs[memManager.codeSpace[pC + 1]]);
-	}
-
-	inline void FMOD_FR_MR() {
-		fRegs[memManager.codeSpace[pC + 1]] = fmod(fRegs[memManager.codeSpace[pC + 1]], *(uint32*)regs[memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_M_FR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] = fmod(*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]], fRegs[memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_FR_M() {
-		fRegs[memManager.codeSpace[pC]] = fmod(fRegs[memManager.codeSpace[pC]], *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]]);
-	}
-
-	inline void FMOD_R_FM() {
-		regs[memManager.codeSpace[pC]] = fmod(regs[memManager.codeSpace[pC]], *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]]);
-	}
-
-	inline void FMOD_FM_R() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] = fmod(*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]], regs[memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_MR_FM() {
-		*(uint32*)regs[memManager.codeSpace[pC]] = fmod(*(uint32*)regs[memManager.codeSpace[pC]], *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]]);
-	}
-
-	inline void FMOD_FM_MR() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] = fmod(*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]], *(uint32*)regs[memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_M_FM() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] = fmod(*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]], *(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]]);
-	}
-
-	inline void FMOD_FM_M() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]] = fmod(*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 4]], *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_R_MFR() {
-		regs[memManager.codeSpace[pC]] = fmod(regs[memManager.codeSpace[pC]], *(float32*)regs[memManager.codeSpace[pC + 1]]);
-	}
-
-	inline void FMOD_MFR_R() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] = fmod(*(float32*)regs[memManager.codeSpace[pC + 1]], regs[memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_MR_MFR() {
-		*(uint32*)regs[memManager.codeSpace[pC]] = fmod(*(uint32*)regs[memManager.codeSpace[pC]], *(float32*)regs[memManager.codeSpace[pC + 1]]);
-	}
-
-	inline void FMOD_MFR_MR() {
-		*(float32*)regs[memManager.codeSpace[pC + 1]] = fmod(*(float32*)regs[memManager.codeSpace[pC + 1]], *(uint32*)regs[memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_M_MFR() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]] = fmod(*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]], *(float32*)regs[memManager.codeSpace[pC]]);
-	}
-
-	inline void FMOD_MFR_M() {
-		*(float32*)regs[memManager.codeSpace[pC]] = fmod(*(float32*)regs[memManager.codeSpace[pC]], *(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC + 1]]);
-	}
-
 	inline void FMOD_FR_FIMMI() {
 		fRegs[memManager.codeSpace[pC]] = fmod(fRegs[memManager.codeSpace[pC]], *(float32*)&memManager.codeSpace[pC + 1]);
-	}
-
-	inline void FMOD_FM_FIMMI() {
-		*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] = fmod(*(float32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]], *(float32*)&memManager.codeSpace[pC + 4]);
-	}
-
-	inline void FMOD_MFR_FIMMI() {
-		*(float32*)regs[memManager.codeSpace[pC]] = fmod(*(float32*)regs[memManager.codeSpace[pC]], *(float32*)&memManager.codeSpace[pC + 1]);
 	}
 
 	inline void FMOD_R_FIMMI() {
 		regs[memManager.codeSpace[pC]] = fmod(regs[memManager.codeSpace[pC]], *(float32*)&memManager.codeSpace[pC + 1]);
 	}
 
-	inline void FMOD_M_FIMMI() {
-		*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]] = fmod(*(uint32*)&memManager.globalDataSpace[*(uint32*)&memManager.codeSpace[pC]], *(float32*)&memManager.codeSpace[pC + 4]);
+	inline void BMOV_R_BR_IMMI() {
+		regs[memManager.codeSpace[pC]] = *(uint8*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 2]);
 	}
 
-	inline void FMOD_MR_FIMMI() {
-		*(uint32*)regs[memManager.codeSpace[pC]] = fmod(*(uint32*)regs[memManager.codeSpace[pC]], *(float32*)&memManager.codeSpace[pC + 1]);
+	inline void BMOV_BR_IMMI_R() {
+		*(uint8*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 2]) = regs[memManager.codeSpace[pC]];
+	}
+
+	inline void BMOV_BR_IMMI_BR_IMMI() {
+		*(uint8*)(regs[memManager.codeSpace[pC]] + *(uint32*)&memManager.codeSpace[pC + 2]) = *(uint8*)(regs[memManager.codeSpace[pC + 1]] + *(uint32*)&memManager.codeSpace[pC + 6]);
+	}
+
+	inline void BMOV_BR_IMMI_IMMI8() {
+		*(uint8*)(regs[memManager.codeSpace[pC]] + *(uint32*)&memManager.codeSpace[pC + 1]) = *(uint8*)&memManager.codeSpace[pC + 5];
 	}
 
 	inline void BMOV_R_BM() {
@@ -1636,7 +728,7 @@ private:
 	bool fdxCycle();
 public:
 	DespairCore(uint8 *codePtr, uint8 *globalDataPtr, uint32 codeStartIndex, uint64 paramAddr, GPUCore *gpuCore, DespairHeader::ExecutableHeader *header, KeyboardManager *keyboardManager);
-	void startCPULoop();	//Despair "Infinite" CPU Loop
+	void startCPULoop();	//despair "Infinite" CPU Loop
 #ifdef DEBUG_DESPAIR
 	void debugGetRegisters(int32 *rOut);
 #endif
