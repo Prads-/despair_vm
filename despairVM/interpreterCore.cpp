@@ -666,6 +666,20 @@ bool DespairCore::fdxCycle() {
 			break;
 		case _RAND:
 			RAND();
+			break;
+		case _JMP_R:
+			JMP_R();
+			break;
+		case _JMPR_R:
+			JMPR_R();
+			pC += 1;
+			break;
+		case _JC_R_R:
+			JC_R_R();
+			break;
+		case _JCR_R_R:
+			JCR_R_R();
+			pC += 2;
 	}
 	return true;
 }

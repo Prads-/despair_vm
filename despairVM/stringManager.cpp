@@ -23,6 +23,7 @@ void clearString(uint64 ptr);
 uint64 getCharArray(uint64 ptr);
 uint64 compare(uint64 ptr1, uint64 ptr2);
 void copyString(uint64 ptr1, uint64 ptr2);
+void substring(uint64 ptr1, uint64 ptr2, uint32 offset, uint32 size);
 
 string integerToString(int32 i);
 string floatToString(float32 f, uint32 precision);
@@ -67,6 +68,9 @@ void StringManager::decodeStringCommands(uint8 cmd, uint8 *ports) {
 			break;
 		case STRING_MANAGER_COPY_STR:
 			copyString(*(uint64*)&ports[PORT_STRING_OBJ], *(uint64*)&ports[PORT_STRING_IO_1]);
+			break;
+		case STRING_MANAGER_SUBSTRING:
+			substring(*(uint64*)&ports[PORT_STRING_OBJ], *(uint64*)&ports[PORT_STRING_IO_1], (uint32)(*(uint64*)&ports[PORT_STRING_IO_2] >> 32), *(uint32*)&ports[PORT_STRING_IO_2]);
 	}
 }
 
@@ -210,4 +214,14 @@ uint64 compare(uint64 ptr1, uint64 ptr2) {
 
 void copyString(uint64 ptr1, uint64 ptr2) {
 	*(string*)ptr1 = *(string*)ptr2;
+}
+
+void substring(uint64 ptr1, uint64 ptr2, uint32 offset, uint32 size) {
+	string *srcStr = (string*)ptr1, *destStr = (string*)ptr2;
+
+	try {
+		*destStr = srcStr->substr(offset, size);
+	} catch (out_of_range) {
+		*destStr = "";
+	}
 }

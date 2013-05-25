@@ -110,7 +110,7 @@ private:
 	}
 
 	inline void ADD_R_IMMI() {
-		regs[memManager.codeSpace[pC]] += *(uint32*)&memManager.codeSpace[pC + 1];
+		regs[memManager.codeSpace[pC]] += *(int32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void SUB_R_R() {
@@ -118,7 +118,7 @@ private:
 	}
 
 	inline void SUB_R_IMMI() {
-		regs[memManager.codeSpace[pC]] -= *(uint32*)&memManager.codeSpace[pC + 1];
+		regs[memManager.codeSpace[pC]] -= *(int32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void MUL_R_R() {
@@ -126,7 +126,7 @@ private:
 	}
 
 	inline void MUL_R_IMMI() {
-		regs[memManager.codeSpace[pC]] *= *(uint32*)&memManager.codeSpace[pC + 1];
+		regs[memManager.codeSpace[pC]] *= *(int32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void DIV_R_R() {
@@ -134,7 +134,7 @@ private:
 	}
 
 	inline void DIV_R_IMMI() {
-		regs[memManager.codeSpace[pC]] /= *(uint32*)&memManager.codeSpace[pC + 1];
+		regs[memManager.codeSpace[pC]] /= *(int32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void MOD_R_R() {
@@ -142,7 +142,7 @@ private:
 	}
 
 	inline void MOD_R_IMMI() {
-		regs[memManager.codeSpace[pC]] %= *(uint32*)&memManager.codeSpace[pC + 1];
+		regs[memManager.codeSpace[pC]] %= *(int32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void AND_R_R() {
@@ -367,7 +367,7 @@ private:
 	}
 
 	inline void FCON_FR_IMMI() {
-		fRegs[memManager.codeSpace[pC]] = *(uint32*)&memManager.codeSpace[pC + 1];
+		fRegs[memManager.codeSpace[pC]] = *(int32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void FCON_R_FIMMI() {
@@ -685,27 +685,27 @@ private:
 	}
 
 	inline void CMPE_R_IMMI() {
-		regs[memManager.codeSpace[pC]] = regs[memManager.codeSpace[pC]] == *(uint32*)&memManager.codeSpace[pC + 1];
+		regs[memManager.codeSpace[pC]] = *(int32*)&regs[memManager.codeSpace[pC]] == *(int32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void CMPNE_R_IMMI() {
-		regs[memManager.codeSpace[pC]] = regs[memManager.codeSpace[pC]] != *(uint32*)&memManager.codeSpace[pC + 1];
+		regs[memManager.codeSpace[pC]] = *(int32*)&regs[memManager.codeSpace[pC]] != *(int32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void CMPG_R_IMMI() {
-		regs[memManager.codeSpace[pC]] = regs[memManager.codeSpace[pC]] > *(uint32*)&memManager.codeSpace[pC + 1];
+		regs[memManager.codeSpace[pC]] = *(int32*)&regs[memManager.codeSpace[pC]] > *(int32*)&memManager.codeSpace[pC + 1];
 	}
 
 	inline void CMPGE_R_IMMI() {
-		regs[memManager.codeSpace[pC]] = regs[memManager.codeSpace[pC]] >= *(uint32*)&memManager.codeSpace[pC + 1];	
+		regs[memManager.codeSpace[pC]] = *(int32*)&regs[memManager.codeSpace[pC]] >= *(int32*)&memManager.codeSpace[pC + 1];	
 	}
 
 	inline void CMPL_R_IMMI() {
-		regs[memManager.codeSpace[pC]] = regs[memManager.codeSpace[pC]] < *(uint32*)&memManager.codeSpace[pC + 1];	
+		regs[memManager.codeSpace[pC]] = *(int32*)&regs[memManager.codeSpace[pC]] < *(int32*)&memManager.codeSpace[pC + 1];	
 	}
 
 	inline void CMPLE_R_IMMI() {
-		regs[memManager.codeSpace[pC]] = regs[memManager.codeSpace[pC]] <= *(uint32*)&memManager.codeSpace[pC + 1];	
+		regs[memManager.codeSpace[pC]] = *(int32*)&regs[memManager.codeSpace[pC]] <= *(int32*)&memManager.codeSpace[pC + 1];	
 	}
 
 	inline void TIME() {
@@ -723,6 +723,28 @@ private:
 
 	inline void RAND() {
 		regs[0] = rand();
+	}
+
+	inline void JMP_R() {
+		pC = regs[memManager.codeSpace[pC]];	
+	}
+
+	inline void JMPR_R() {
+		pC += regs[memManager.codeSpace[pC]];
+	}
+
+	inline void JC_R_R() {
+		if (regs[memManager.codeSpace[pC]] == 0) {
+			pC = regs[memManager.codeSpace[pC + 1]];
+		} else {
+			pC += 2;
+		}
+	}
+
+	inline void JCR_R_R() {
+		if (regs[memManager.codeSpace[pC]] == 0) {
+			pC += regs[memManager.codeSpace[pC + 1]];
+		}
 	}
 
 	bool fdxCycle();
